@@ -1,18 +1,47 @@
-import { useState } from "react";
-const body = document.querySelector('body');
+import { useContext, useEffect } from "react";
+import { DataContext } from "../context/DataContext";
+// import moon  from "../../node_modules/font-awesome/css";
+const body = document.querySelector("body");
 function Toggle() {
-    const [theme, setTheme] = useState(false);
-    const changeTheme = () => {
-        setTheme(!theme);
-        if (!theme) {
-            body.classList.add('active');
-        } else {
-            body.classList.remove('active');
-        }
+  const { dark, dataFromLocalStorage, changetheme } = useContext(DataContext);
+  const getThemeFromLocalStorage = (key) => {
+    return localStorage.getItem(key);
+  };
+  const setDarkLocalStorage = (theme) => {
+    localStorage.setItem("dark", theme);
+  };
+  const changeTheme = () => {
+    if (dark) {
+      body.classList.remove("active");
+      setDarkLocalStorage(dark);
+    } else {
+      body.classList.add("active");
+      setDarkLocalStorage(dark);
     }
-    return (
-    <div className={`toggle ${theme ? 'active' : ''}`} onClick={() => changeTheme()}>
-      <span></span>
+    changetheme(!dark);
+  };
+
+  useEffect(() => {
+    if (getThemeFromLocalStorage("dark") == "false") {
+      body.classList.add("active");
+      changetheme(true);
+    } else {
+      body.classList.remove("active");
+      changetheme(false);
+    }
+  }, []);
+
+  return (
+    <div
+      className={`toggle ${
+        getThemeFromLocalStorage("dark") === "true" ? "active" : "",
+        dark ? "active" : ""
+      }`}
+      onClick={() => changeTheme()}
+    >
+      <span>
+      <i className={`fa ${!dark ? 'fa-moon-o' : 'fa-sun-o'}`} aria-hidden="true"></i>
+      </span>
     </div>
   );
 }

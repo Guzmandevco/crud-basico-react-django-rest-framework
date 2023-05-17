@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&display=swap');
 :root
 {
-    --primary: #034159;
-    --secondary: #025951;
-    --background: #02735E;
+    --primary: #0D0D0D;
+    --secondary: #384D59;
+    --background: #111C26;
     --green-one: #0CF25D;
     --green-two: #038C3E;
     --danger: #F23030;
     --warning: #F28705;
-    --white: #FFFFFF;
+    --white: #C1D4D9;
 }
 
 *
@@ -16,17 +16,21 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    transition: .5s all ease;
 }
 body
 {
     background-color: var(--primary);
     font-family: "Poppins", sans-serif;
-    transition: .3s background ease-in-out;
+    /* transition: .3s background ease-in-out; */
     /* text-align: center; */
 }
 body.active
 {
-    background-color: var(--white);
+    --background: #F2F2F2;
+    --primary: #A6A6A6;
+    --secondary: #404040;
+    background-color: var(--background);
 }
 p
 {
@@ -46,6 +50,10 @@ header
 header .logo
 {
     color: var(--white);
+}
+body.active header .logo
+{
+    color: var(--secondary);
 }
 header ul
 {   
@@ -76,9 +84,14 @@ header li a:hover
     width: 60px;
     height: 30px;
     border-radius: 20px;
-    background-color: var(--secondary);
     position: relative;
     cursor: pointer;
+    box-shadow: 0  2px 10px rgba(0, 0, 0, 0.98);
+}
+body.active .toggle.active
+{
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+    
 }
 .toggle span
 {
@@ -87,13 +100,19 @@ header li a:hover
     height: 30px;
     background-color: var(--primary);
     border-radius: 50%;
-    border: solid 1.5px var(--secondary);
+    border: solid 1.5px var(--background);
     transform: scale(0.98, 0.98);
     transition: .5s transform ease-in-out;
+    text-align: center;
+    line-height: 28px;
+    color: var(--warning);
+    font-size: 18px;
 }
 .toggle.active span
 {
+    background-color: #F2F2F2;
     animation: rotate right .5s ease-in-out;
+    box-shadow: -2px 1px 1px rgba(0, 0, 0, 0.25);
     transform: translateX(30px);
 }
 @keyframes rotate {
@@ -125,7 +144,7 @@ header li a:hover
     justify-content: space-around;
     width: 300px;
     height: 200px;
-    background-color: var(--secondary);
+    background-color: var(--background);
     border-radius: .5rem;
     padding: 10px 15px;
     box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.19);
@@ -134,6 +153,11 @@ header li a:hover
 {
     color: var(--white);
     font-weight: 700;
+}
+body.active h3,
+body.active p
+{
+    color: var(--secondary);
 }
 :where(.todo > p)
 {
@@ -170,6 +194,10 @@ header li a:hover
 {
     background-color: var(--green-one);
 }
+body.active .button__container .btn
+{
+    color: var(--background);
+}
 /* End styles of Todo Card */
 
 /* Start Create todo */
@@ -185,6 +213,7 @@ header li a:hover
     gap: 50px;
     border-radius: .3rem;
     justify-content: space-between;
+    background-color: var(--background);
     box-shadow: -2px 2px 5px 0 rgba(0, 0, 0, 0.19);
 }
 .create__todo input[type="text"], textarea, button
@@ -254,6 +283,11 @@ header li a:hover
     margin: 0 auto;
     transform: translateY(100%);
     padding: 20px;
+}
+body.active .card__confirm
+{
+    background-color: #F2F2F2;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.19);
 }
 .card__confirm h4,
 .card__confirm p
