@@ -11,7 +11,7 @@ function Confirm() {
   const [todo, setTodo] = useState({});
   const onDelete = async () => {
     if (confirm) {
-      await deleteData(todo.id);
+      await deleteData(params.id);
       setTimeout(() => {
         navigate("/all");
       }, 500);

@@ -1,9 +1,10 @@
-from django.urls import path, include
-from rest_framework import routers
-from .views import TaskView
+from django.urls import path
+from .views import CreateTodo, LoadTodos, RemoveTodo, EditTodo, GetTodo
 
-router = routers.DefaultRouter()
-router.register(r'todo', TaskView, basename='todo')
 urlpatterns = [
-    path('api/v1/', include(router.urls))
-]
+  path('todos/create/', CreateTodo.as_view(), name='create-task'),
+  path('todos/', LoadTodos.as_view(), name='load-tasks'),
+  path('todos/delete/<int:pk>/', RemoveTodo.as_view(), name='remove-todo'),
+  path('todos/edit/todo/<int:pk>/', EditTodo.as_view(), name='edit-todo'),
+  path('todos/todo/<int:pk>/', GetTodo.as_view(), name='get-todo'),
+  ]

@@ -13,7 +13,7 @@ function All() {
   return (
     <>
       <h3 style={{ textAlign: "center", margin: "20px" }}>{`${
-        todos.length ? "Aquí están todas sus tareas" : "Usted no tiene tareas"
+        todos.length ? "Aquí están todas sus tareas" : "Usted aún no ha creado tareas"
       }`}</h3>
       <div className="todo__container">
         {todos.map((todo) => (

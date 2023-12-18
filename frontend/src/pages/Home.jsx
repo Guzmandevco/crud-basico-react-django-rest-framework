@@ -4,7 +4,10 @@ function Home() {
         <h3 style={{ textAlign: "center", margin: "20px" }}>
             Aquí está su lista de tareas
         </h3>
-        <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quibusdam fugit quia quo, blanditiis totam dolorum, esse explicabo odio unde accusamus exercitationem praesentium expedita placeat corporis quae dolore officiis accusantium atque?</p>
+        <p>Aquí podrá llevar un registro y control de las tareas asignadas a su dia a dia.</p>
+        <br />
+        <p> Centrese en ser productivo, no en <span>recordar cosas</span>, con nuestra aplicación web puede gestionar su tiempo!</p>
+        <div><i className="fa fa-clock-o"></i></div>
     </div>
   );
 }
