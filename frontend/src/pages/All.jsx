@@ -1,29 +1,58 @@
-import { useEffect, useState } from "react";
-import { loadData } from "../api/connect.api";
+import { useEffect, useState, useContext } from "react";
+import { loadData, retrieveUserData } from "../api/connect.api";
 import Todo from "../components/Todo";
+import { useNavigate } from 'react-router-dom';
+import { LoggingContext } from '../context/LogginContext';
 function All() {
+  const { loged, token } = useContext(LoggingContext);
+  const navigate = useNavigate();
   const [todos, setTodos] = useState([]);
+  const [userData, setUserData] = useState(null);
+  
+  const  [isAuthenticated, setIsAuthenticated] = useState(loged);
   useEffect(() => {
     async function getData() {
-      const data = await loadData();
-      setTodos(data.data);
+      try {
+        const data = await retrieveUserData(token);
+        setTodos(data.todos);
+        alert(JSON.stringify(data.todos))
+      } catch (error) {
+        console.error('Error al obtener datos:', error);
+        // Puedes manejar el error según tus necesidades
+      }
     }
     getData();
   }, []);
+  
+  //redirect to given 'to' param using useNavigate instance 
+  const redirect = (to='/') => {
+    navigate(to);
+  };
   return (
     <>
       <h3 style={{ textAlign: "center", margin: "20px" }}>{`${
         todos.length ? "Aquí están todas sus tareas" : "Usted aún no ha creado tareas"
       }`}</h3>
       <div className="todo__container">
-        {todos.map((todo) => (
-          <Todo
-            key={todo.id}
-            title={todo.title}
-            description={todo.description}
-            id={todo.id}
-          />
-        ))}
+      {
+       
+        isAuthenticated ? (
+        <>
+          {todos.map((todo) => (
+              <Todo
+                key={todo.id}
+                title={todo.title}
+                description={todo.description}
+                done={todo.done}
+                id={todo.id}
+              />
+          ))}
+        </>
+        ) : (
+        redirect()
+        )
+        
+      }
       </div>
     </>
   );

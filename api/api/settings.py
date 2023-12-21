@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'api_app',
+    'jwt'
 ]
 
 MIDDLEWARE = [
@@ -109,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Americas/Bogota'
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 
@@ -124,6 +125,8 @@ STATIC_URL = 'static/'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173'
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -133,3 +136,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 rest_framework = {
   'Authentication.classes': ['']
 }
+
+
+AUTH_USER_MODEL = "api_app.CustomUser"

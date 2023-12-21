@@ -30,7 +30,7 @@ function EditTodo({ todo }) {
           <input
             type="text"
             onChange={(e) =>
-              setData({ title: e.target.value, description: data.description })
+              setData({ ...data, title: e.target.value })
             }
             required
             placeholder="Reunión con proveedores"
@@ -44,12 +44,13 @@ function EditTodo({ todo }) {
             rows="10"
             value={data.description}
             onChange={(e) =>
-              setData({ title: data.title, description: e.target.value })
+              setData({ ...data, description: e.target.value })
             }
           ></textarea>
         </div>
-        <div>
-          <input type="checkbox" />
+        <div className='flex'>
+        <label >{data.done ? 'Terminado' : 'Pendiente'}</label>
+          <input type="checkbox" checked={data.done} onChange = {e => setData({...data, done: !data.done})} />
         </div>
         <button type="submit" onClick={() => onSubmit(data)}>
           {`${params.id ? 'Guardar Cambios' : 'Crear'}`}
