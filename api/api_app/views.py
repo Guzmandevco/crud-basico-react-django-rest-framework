@@ -1,24 +1,33 @@
 import datetime
 from rest_framework import generics
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializer import TodoSerializer, UserSerializer
-from .models import Todo, CustomUser
+from .serializers import TodoSerializer, UserSerializer
+from .models import Todo, User
 import jwt
 
-class CreateTodo(generics.CreateAPIView):
-    serializer_class = TodoSerializer
-    queryset = Todo.objects.all()
-    user = CustomUser.objects.get(pk=2)
 
-    def perform_create(self, serializer):
-        print(self.request.data)
-        todo = Todo.objects.filter(title=self.request.data['title'])
-        if todo:
-          raise ValueError(f"Todo {self.request.data['title']} already exists")
-        # Asigna el usuario actual a la tarea antes de guardarla
-        serializer.save(user=self.user)
+class CreateTodo(APIView):
+    def post(self, request, *args, **kwargs):
+        # Accede al usuario que tiene la sesión iniciada
+        user_id = int(self.request.data['user'])
+        user = User.objects.get(pk=user_id)
+        serializer = TodoSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                todo = Todo.objects.get(title=request.data['title'], user=user)
+                raise ValueError(f"Todo {request.data['title']} already exists for this user")
+            except Todo.DoesNotExist:
+                # Asigna el usuario actual a la tarea antes de guardarla
+                serializer.save(user=user)
+                return Response({'data': 'any'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         
 class LoadTodos(generics.ListAPIView):
     queryset = Todo.objects.all()
@@ -31,12 +40,18 @@ class RemoveTodo(generics.DestroyAPIView):
     def delete(self, request, *args, **kwargs):
       return self.destroy(request, *args, **kwargs)
 
-class EditTodo(generics.UpdateAPIView):  # Use UpdateAPIView for updating
-    queryset = Todo.objects.all()
-    serializer_class = TodoSerializer
-    
+class EditTodo(APIView):
     def put(self, request, *args, **kwargs):
-      return self.update(request, *args, **kwargs)
+        todo_id = kwargs.get('pk')
+        try:
+            todo = Todo.objects.get(pk=todo_id)
+        except Todo.DoesNotExist:
+            return Response({'error': 'Todo not found'}, status=status.HTTP_404_NOT_FOUND)
+        todo.title = request.data['title']
+        todo.done = request.data['done']
+        todo.description = request.data['description']
+        todo.save()
+        return Response({'success': 'Todo updated successfully'})
 
 
 class GetTodo(APIView):
@@ -62,10 +77,10 @@ class LoginView(APIView):
   def post(self, request):
     email = request.data['email']
     password = request.data['password']
-    account_user = CustomUser.objects.filter(email= email).first()
+    account_user = User.objects.filter(email= email).first()
     if account_user is None or not account_user.check_password(password):
       raise AuthenticationFailed("User data not found!")
-    
+    login(request, account_user)
     payload = {
       'id': account_user.id,
       'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
@@ -74,17 +89,19 @@ class LoginView(APIView):
     token = jwt.encode(payload, 'secret', algorithm='HS256')
     response = Response()
     response.set_cookie(key='jwt', value=token, httponly=True)
-    response.data = {'token': token}
-    print(response.data['token'], account_user)
+    response.data = {'token': token, 'user_id': account_user.id}
+   # print(response.data['token'], account_user)
     return response
 #
 ##
 class RegisterView(APIView):
   def post(self, request):
-    serializer = UserSerializer(data = request.data)
-    serializer.is_valid(raise_exception=True)
-    serializer.save()
-    return Response(serializer.data)
+      serializer = UserSerializer(data=request.data)
+      serializer.is_valid(raise_exception=True)
+      user = serializer.save()
+      login(request, user)
+     
+      return Response({'user': serializer.data})
 #
 ##
 class UserView(APIView):
@@ -96,7 +113,7 @@ class UserView(APIView):
       payload = jwt.decode(token, 'secret', algorithms= ['HS256'])
     except jwt.ExpiredSignatureError:
       raise AuthenticationFailed('Token expired!')
-    user = CustomUser.objects.get(pk=payload['id'])
+    user = User.objects.get(pk=payload['id'])
     serializer = UserSerializer(user)
     queryset = Todo.objects.filter(user= payload['id'])
     todo_serializer = TodoSerializer(queryset, many=True)
@@ -104,7 +121,7 @@ class UserView(APIView):
       'user': serializer.data,
       'todos': todo_serializer.data
     }
-    print(data['todos'])
+    #print(data['todos'])
     return Response(data)
     
 class LogoutView(APIView):
@@ -112,5 +129,5 @@ class LogoutView(APIView):
     response = Response()
     response.delete_cookie('jwt')
     response.data = {'message': 'success'}
-    print(response.data['message'])
+    #print(response.data['message'])
     return response

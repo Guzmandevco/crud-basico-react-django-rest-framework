@@ -8,22 +8,34 @@ import All from "./pages/All";
 import RegisterView from './pages/RegisterUser'
 import LoginView from './pages/LoginView'
 import NotFoundPage from "./pages/Page404";
-import EditTodo from "./pages/Edit";
+import EditTodo from "./pages/EditView";
 import Confirm from "./pages/Confirm";
 import { retrieveUserData } from './api/connect.api';
 import { LoggingContext } from './context/LogginContext.jsx';
 
 function App() {
+  const getToken = () => localStorage.getItem('jwt');
+  const {setToken, token, setLoged} = useContext(LoggingContext);
+  const [sessionId, setSessionId] = useState(getToken() || null);
   useEffect(() => {
-    const getUserData = async () => {
+    async function getData() {
       try {
-      const { data } = retrieveUserData('');
-      } catch (error){
-      alert(data, error)
+        const data = await retrieveUserData(token);
+        setTodos(data.todos);
+        //alert(JSON.stringify(data.todos))
+      } catch (error) {
+        console.error('Error al obtener datos:', error);
       }
     }
-    getUserData();
+    if(sessionId) {
+      setToken(sessionId);
+      setLoged(true);
+    } else {
+      setLoged(false);
+    }
+    getData();
   }, []);
+  
   return (
     <>
       <BrowserRouter>

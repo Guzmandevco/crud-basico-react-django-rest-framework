@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 function EditTodo({ todo }) {
   const navigate = useNavigate();
   const params = useParams();
-  const [data, setData] = useState({});
+  const [data, setData] = useState({title: "", description: "", done: false, user: parseInt(localStorage.getItem('user_id'))});
   const handleSubmit = (e) => {
     e.preventDefault();
   };

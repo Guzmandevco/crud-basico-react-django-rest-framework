@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { createTodo } from "../api/connect.api";
 import { useNavigate } from "react-router-dom";
-
+import { LoggingContext } from "../context/LogginContext";
 function CreateTodo() {
+  const { userData } = useContext(LoggingContext);
   const handleSubmit = (e) => {
     e.preventDefault();
   };
   const values = {
     title: "",
     description: "",
-    done: false
+    done: false,
+    user: parseInt(localStorage.getItem('user_id'))
   };
   const navigate = useNavigate();
   const [data, setData] = useState(values);

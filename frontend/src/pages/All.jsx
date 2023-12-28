@@ -15,7 +15,7 @@ function All() {
       try {
         const data = await retrieveUserData(token);
         setTodos(data.todos);
-        alert(JSON.stringify(data.todos))
+        //alert(JSON.stringify(data.todos))
       } catch (error) {
         console.error('Error al obtener datos:', error);
         // Puedes manejar el error según tus necesidades

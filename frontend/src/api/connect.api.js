@@ -20,11 +20,16 @@ export async function deleteData(id) {
 }
 
 export async function createTodo(todo) {
-    return axios.post(baseUrl+'/todos/create/', todo);
+    return axios.post(`${baseUrl}/todos/create/`, todo, {withCredentials: true});
 }
 
-export async function editTodo(id, data) {
-    return axios.put(`${baseUrl}/todos/edit/todo/${id}/`, data);
+export async function register(userData) {
+    return axios.post(`${baseUrl}/users/register/`, userData);
+}
+
+
+export async function editTodo(pk, data) {
+    return axios.put(`${baseUrl}/todos/edit/todo/${pk}/`, data, {withCredentials: true});
 }
 
 export async function getTodo(id) {
@@ -37,12 +42,11 @@ export async function retrieveUserData(token) {
     axios.defaults.headers.common['Authorization'] = `Token ${token}`;
     // Realiza la solicitud utilizando axios
     const response = await axios.get(`${baseUrl}/users/user`, { withCredentials: true });
-
     // Devuelve los datos  de la solicitud
     return response.data;
   } catch (error) {
     // Maneja errores aquí si es necesario
     console.error('Error al recuperar datos de usuario:', error);
-    throw error; // Puedes manejar el error según tus necesidades
+    throw error; 
   }
 }

@@ -13,12 +13,16 @@ function Header() {
     setIsAuthenticated(loged);
     setActiveLink(isAuthenticated ? 'Home' : 'Login');
   }, [loged, isAuthenticated]);
-
+  
+  // deleting jwt token from local storage
+  const removeSessionId = key => localStorage.removeItem(key);
   const pagesList = isAuthenticated ? ['Home', 'About', 'Create', 'All'] : ['Home', 'About', 'Login', 'Register'];
   const logout = async () => {
     await logoutIn();
+    removeSessionId('jwt');
+    setIsAuthenticated(false);
     setLoged(false);
-    isAuthenticated(false);
+    localStorage.removeItem('user_id');
   }
   return (
     <header>
