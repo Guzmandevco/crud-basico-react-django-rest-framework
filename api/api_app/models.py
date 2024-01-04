@@ -42,3 +42,6 @@ class Todo(models.Model):
     
     def recent_created(self):
         pass
+
+
+# Thanks for watching! 
