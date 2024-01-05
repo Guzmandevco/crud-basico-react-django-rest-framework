@@ -2,23 +2,23 @@ import { useEffect, useState, useContext } from "react";
 import { loadData, retrieveUserData } from "../api/connect.api";
 import Todo from "../components/Todo";
 import { useNavigate } from "react-router-dom";
-import { LoggingContext } from "../context/LogginContext";
-function All() {
-  const { loged, token } = useContext(LoggingContext);
+import { AuthContext } from "../context/AuthProvider";
+
+function DashBoard() {
+  const token = localStorage.getItem("jwt");
   const navigate = useNavigate();
   const [todos, setTodos] = useState([]);
   const [userData, setUserData] = useState(null);
-
-  const [isAuthenticated, setIsAuthenticated] = useState(loged);
+  let isAuthenticated = true;
   useEffect(() => {
     async function getData() {
       try {
-        const data = await retrieveUserData(token);
+        const { data } = await retrieveUserData(token);
         setTodos(data.todos);
-        // alert(JSON.stringify(data.todos));
+
+        alert(token);
       } catch (error) {
         console.error("Error al obtener datos:", error);
-        // Puedes manejar el error según tus necesidades
       }
     }
     getData();
@@ -50,4 +50,4 @@ function All() {
   );
 }
 
-export default All;
+export default DashBoard;

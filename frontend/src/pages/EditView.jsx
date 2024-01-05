@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
 import { editTodo, getTodo } from "../api/connect.api";
 import { useNavigate, useParams } from "react-router-dom";
-
+import formatDate from "../utils/formatDate";
 function EditTodo({ todo }) {
   const navigate = useNavigate();
   const params = useParams();
-  const [data, setData] = useState({title: "", description: "", done: false, user: parseInt(localStorage.getItem('user_id'))});
+  const [data, setData] = useState({
+    title: "",
+    description: "",
+    done: false,
+    creation_date: null,
+    expiration_date: null,
+    user: parseInt(localStorage.getItem("user_id")),
+  });
   const handleSubmit = (e) => {
     e.preventDefault();
   };
@@ -18,6 +25,7 @@ function EditTodo({ todo }) {
       if (params.id) {
         let todo = await getTodo(params.id);
         setData(todo.data);
+        //  alert(JSON.stringify(todo.data));
       }
     }
     get();
@@ -29,9 +37,7 @@ function EditTodo({ todo }) {
           <label>Ingrese el nombre de la tarea (*)</label>
           <input
             type="text"
-            onChange={(e) =>
-              setData({ ...data, title: e.target.value })
-            }
+            onChange={(e) => setData({ ...data, title: e.target.value })}
             required
             placeholder="Reunión con proveedores"
             value={data.title}
@@ -43,17 +49,31 @@ function EditTodo({ todo }) {
             cols="30"
             rows="10"
             value={data.description}
-            onChange={(e) =>
-              setData({ ...data, description: e.target.value })
-            }
+            onChange={(e) => setData({ ...data, description: e.target.value })}
           ></textarea>
         </div>
-        <div className='flex'>
-        <label >{data.done ? 'Terminado' : 'Pendiente'}</label>
-          <input type="checkbox" checked={data.done} onChange = {e => setData({...data, done: !data.done})} />
+
+        <div>
+          <label>Ingrese la fecha maxima para realizar esta tarea. (*)</label>
+          <input
+            type="date"
+            value={formatDate(data.expiration_date)}
+            onChange={(e) =>
+              setData({ ...data, expiration_date: e.target.value })
+            }
+          />
+        </div>
+
+        <div className="flex">
+          <label>{data.done ? "Terminado" : "Pendiente"}</label>
+          <input
+            type="checkbox"
+            checked={data.done}
+            onChange={(e) => setData({ ...data, done: !data.done })}
+          />
         </div>
         <button type="submit" onClick={() => onSubmit(data)}>
-          {`${params.id ? 'Guardar Cambios' : 'Crear'}`}
+          {`${params.id ? "Guardar Cambios" : "Crear"}`}
         </button>
       </form>
     </div>
