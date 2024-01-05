@@ -24,15 +24,7 @@ class User(AbstractUser):
     objects = CustomUserManager()
     
     def __str__(self):
-<<<<<<< HEAD:api/api_app/models.py
         return f'{self.title} - {self.user.username}'
     
     def recent_created(self):
         pass
-
-
-# Thanks for watching! 
-=======
-        return self.username
-
->>>>>>> auth:api/users/models.py
