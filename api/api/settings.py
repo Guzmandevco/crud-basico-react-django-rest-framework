@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'api_app',
+    'users',
+    'todos',
     'jwt'
 ]
 
@@ -139,4 +140,4 @@ rest_framework = {
 }
 
 
-AUTH_USER_MODEL = "api_app.User"
+AUTH_USER_MODEL = "users.User"

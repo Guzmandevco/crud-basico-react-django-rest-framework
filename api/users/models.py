@@ -1,11 +1,5 @@
-from django.contrib.auth.models import AbstractUser, PermissionsMixin, BaseUserManager
-from django.utils import timezone
+from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db import models
-
-'''
-`User` model
-'''
-
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not email:
@@ -15,29 +9,22 @@ class CustomUserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-        
+
     def create_superuser(self, username, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-
         return self.create_user(username, email, password, **extra_fields)
-        
+
 class User(AbstractUser):
-    name = models.CharField(max_length= 50)
+    name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
-    password = models.CharField(max_length=255)
     username = models.CharField(max_length=50)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []  # Puedes añadir campos adicionales aquí si es necesario
+    REQUIRED_FIELDS = ['username', 'name']  # Agrega campos necesarios para crear usuario
     objects = CustomUserManager()
-
-class Todo(models.Model):
-    title = models.CharField(max_length=50, blank=False)
-    description = models.TextField(max_length=100, blank=True)
-    done = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     
     def __str__(self):
+<<<<<<< HEAD:api/api_app/models.py
         return f'{self.title} - {self.user.username}'
     
     def recent_created(self):
@@ -45,3 +32,7 @@ class Todo(models.Model):
 
 
 # Thanks for watching! 
+=======
+        return self.username
+
+>>>>>>> auth:api/users/models.py
