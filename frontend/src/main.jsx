@@ -1,18 +1,18 @@
-import { DataContextProvider } from "./context/DataContext.jsx";
-import { LoggingContextProvider } from "./context/LogginContext.jsx";
+import React from "react";
+import ReactDOM from "react-dom";
+import { DataContextProvider } from "./context/DataContext";
 import { BrowserRouter } from "react-router-dom";
-import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css";
+import App from "./App";
 import AuthProvider from "./context/AuthProvider";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <LoggingContextProvider>
-    <DataContextProvider>
-      <BrowserRouter>
-        <AuthProvider>
+  <BrowserRouter>
+    <React.StrictMode>
+      <AuthProvider>
+        <DataContextProvider>
           <App />
-        </AuthProvider>
-      </BrowserRouter>
-    </DataContextProvider>
-  </LoggingContextProvider>
+        </DataContextProvider>
+      </AuthProvider>
+    </React.StrictMode>
+  </BrowserRouter>
 );

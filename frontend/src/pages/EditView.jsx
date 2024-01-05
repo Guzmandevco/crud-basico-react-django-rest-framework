@@ -28,7 +28,7 @@ function EditTodo({ todo }) {
         //  alert(JSON.stringify(todo.data));
       }
     }
-    get();
+    //get();
   }, []);
   return (
     <div className="create__todo ">

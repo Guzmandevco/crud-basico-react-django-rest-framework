@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { logging } from "../api/connect.api";
 const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -19,8 +19,11 @@ const AuthProvider = ({ children }) => {
         }
       );
       const res = await response.json();
-      if (res.data) {
-        setUser(res.data.user);
+      if (res) {
+        {
+          /*setUser(res.data.user);*/
+        }
+        // alert(res.token);
         setToken(res.token);
         localStorage.setItem("jwt", res.token);
         navigate("/dashboard");
@@ -28,6 +31,7 @@ const AuthProvider = ({ children }) => {
       }
       throw new Error(res.message);
     } catch (err) {
+      navigate("/test");
       console.error(err);
     }
   };
@@ -47,7 +51,7 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
-
+export { AuthContext };
 export const useAuth = () => {
   return useContext(AuthContext);
 };
