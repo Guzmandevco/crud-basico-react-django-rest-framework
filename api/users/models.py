@@ -24,7 +24,7 @@ class User(AbstractUser):
     objects = CustomUserManager()
     
     def __str__(self):
-        return f'{self.title} - {self.user.username}'
+        return f'{self.username}'
     
     def recent_created(self):
         pass

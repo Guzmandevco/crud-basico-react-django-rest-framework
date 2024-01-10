@@ -10,6 +10,7 @@ import LoginView from "./pages/LoginView";
 import NotFoundPage from "./pages/Page404";
 import EditTodo from "./pages/EditView";
 import Confirm from "./pages/Confirm";
+<<<<<<< HEAD
 import PrivateRoute from "./routes/PrivateRoute";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,6 +21,24 @@ function App() {
     if (token) {
       navigate("/dashboard");
     }
+=======
+import { retrieveUserData } from "./api/connect.api";
+
+function App() {
+  const getToken = () => localStorage.getItem("jwt");
+  const [sessionId, setSessionId] = useState(getToken() || null);
+  useEffect(() => {
+    async function getData() {
+      try {
+        const res = await retrieveUserData(getToken());
+        setTodos(res.todos);
+        setSessionId(data.token);
+      } catch (error) {
+        console.error("Error al obtener datos:", error);
+      }
+    }
+    getData();
+>>>>>>> auth
   }, []);
   return (
     <>
@@ -34,6 +53,10 @@ function App() {
         {/* PrivateRoute envuelve DashBoard */}
         {/*<PrivateRoute path="/dashboard" element={<DashBoard />} /> */}
         <Route path="/login" element={<LoginView />}></Route>
+<<<<<<< HEAD
+=======
+        <Route path="/dashboard" element={<DashBoard />}></Route>
+>>>>>>> auth
         <Route path="/edit/:id" element={<EditTodo />}></Route>
         <Route path="/delete/:id" element={<Confirm />}></Route>
         <Route path="*" element={<NotFoundPage />}></Route>

@@ -4,9 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthProvider";
 function LoginView() {
   const navigate = useNavigate();
+<<<<<<< HEAD
   const { loginAction } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+=======
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { loginAction } = useContext(AuthContext);
+>>>>>>> auth
   const handleSubmit = (e) => {
     e.preventDefault();
   };
@@ -18,9 +24,17 @@ function LoginView() {
     setPassword(e.target.value);
   };
 
+<<<<<<< HEAD
   const loggIn = async (userData) => {
     // const res = await logging(userData);
     loginAction(userData);
+=======
+  // saving token into local storage
+  const saveToken = (value) => localStorage.setItem("jwt", value);
+
+  const loggIn = async (userData) => {
+    const res = await loginAction(userData);
+>>>>>>> auth
   };
 
   return (

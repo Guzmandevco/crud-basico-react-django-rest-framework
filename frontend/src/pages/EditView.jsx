@@ -18,7 +18,7 @@ function EditTodo({ todo }) {
   };
   const onSubmit = async (todo) => {
     let data = await editTodo(params.id, todo);
-    navigate("/all");
+    navigate("/dashboard");
   };
   useEffect(() => {
     async function get() {

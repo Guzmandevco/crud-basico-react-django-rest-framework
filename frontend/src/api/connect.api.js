@@ -6,8 +6,14 @@ export function loadData() {
 
 //logging function
 export async function logging(data) {
+<<<<<<< HEAD
   alert();
   return axios.post(`${baseUrl}/users/login/`, data, { withCredentials: true });
+=======
+  return axios.post(`${baseUrl}/users/login/`, data, {
+    withCredentials: true,
+  });
+>>>>>>> auth
 }
 
 //logout function
@@ -39,16 +45,33 @@ export async function getTodo(id) {
   return axios.get(`${baseUrl}/todos/todo/${id}/`);
 }
 
+// Configura un interceptor para agregar el token de autorización a todas las solicitudes
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("jwt"); // Reemplaza esto con tu lógica para obtener el token
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export async function retrieveUserData(token) {
   try {
     // Configura las opciones por defecto, como encabezados personalizados
     axios.defaults.headers.common["Authorization"] = `Token ${token}`;
     // Realiza la solicitud utilizando axios
+<<<<<<< HEAD
     const response = await axios.get(`${baseUrl}/users/user`, {
+=======
+    return axios.get(`${baseUrl}/users/user`, {
+>>>>>>> auth
       withCredentials: true,
     });
     // Devuelve los datos  de la solicitud
-    return response.data;
   } catch (error) {
     // Maneja errores aquí si es necesario
     console.error("Error al recuperar datos de usuario:", error);

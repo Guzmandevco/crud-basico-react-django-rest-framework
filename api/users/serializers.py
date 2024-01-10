@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -15,3 +16,14 @@ class UserSerializer(serializers.ModelSerializer):
       instance.set_password(password)
     instance.save()
     return instance
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        # Puedes personalizar la información que se incluirá en el token de acceso aquí
+        data['username'] = self.user.username
+        data['id'] = self.user.id
+        # Añade cualquier otro campo que desees incluir en el token de acceso
+        return data
+
+
