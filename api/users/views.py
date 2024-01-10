@@ -1,43 +1,40 @@
 import datetime
 from rest_framework import generics
 from django.contrib.auth import login
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from todos.serializers import TodoSerializer
-from users.serializers import UserSerializer
+from users.serializers import UserSerializer, MyTokenObtainPairSerializer
+from rest_framework.permissions import IsAuthenticated
 from todos.models import Todo
 from .models import User
-import jwt
 
-#
-##
-'''
-Login view
-return => `jwt`
-set => cookie session
-'''
-class LoginView(APIView):
-  def post(self, request):
-    email = request.data['email']
-    password = request.data['password']
-    account_user = User.objects.filter(email= email).first()
-    if account_user is None or not account_user.check_password(password):
-      raise AuthenticationFailed("User data not found!")
-    login(request, account_user)
-    payload = {
-      'id': account_user.id,
-      'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-      'iat': datetime.datetime.utcnow()
-    }
-    token = jwt.encode(payload, 'secret', algorithm='HS256')
-    response = Response()
-    response.set_cookie(key='jwt', value=token, httponly=True)
-    response.data = {'token': token, 'user_id': account_user.id}
-    print(response.data['token'], account_user)
-    return response
+
+
+# Vista para iniciar sesión y obtener el token de acceso y actualización
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer  # Reemplaza con tu propio serializador si es necesario
+
+# Vista para obtener un nuevo token de acceso utilizando el token de actualización
+class MyTokenRefreshView(TokenRefreshView):
+    pass  # No es necesario personalizar, pero puedes hacerlo si lo necesitas
+
+# Ejemplo de una vista protegida que requiere autenticación mediante JWT
+class ProtectedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            todos = Todo.objects.filter(user=request.user)
+            serializer = TodoSerializer(todos, many=True)
+            return Response({"todos": serializer.data}, status= status.HTTP_200_OK)
+        except Todo.DoesNotExist:
+            return Response({"message": "No se encontrarón `Todos`"}, status= status.HTTP_404_NOT_FOUND)
+
 #
 ##
 class RegisterView(APIView):
@@ -48,27 +45,6 @@ class RegisterView(APIView):
       login(request, user)
 
       return Response({'user': serializer.data})
-#
-##
-class UserView(APIView):
-  def get(self, request):
-    token = request.COOKIES.get('jwt')
-    if not token:
-      raise AuthenticationFailed('UnAuthenticated!')
-    try:
-      payload = jwt.decode(token, 'secret', algorithms= ['HS256'])
-    except jwt.ExpiredSignatureError:
-      raise AuthenticationFailed('Token expired!')
-    user = User.objects.get(pk=payload['id'])
-    serializer = UserSerializer(user)
-    queryset = Todo.objects.filter(user= payload['id'])
-    todo_serializer = TodoSerializer(queryset, many=True)
-    data = {
-      'user': serializer.data,
-      'todos': todo_serializer.data
-    }
-    #print(data['todos'])
-    return Response(data)
 
 class LogoutView(APIView):
   def post(self, request):
@@ -77,36 +53,6 @@ class LogoutView(APIView):
     response.data = {'message': 'success'}
     #print(response.data['message'])
     return response
-
-
-class RefreshAccesToken(APIView):
-    """
-    Return a new acces token
-    """
-        
-    def post(self, request):
-        email = request.data['email']
-        password = request.data['password']
-        account_user = User.objects.filter(email= email).first()
-        if account_user is None or not account_user.check_password(password):
-            raise AuthenticationFailed("User data not found!")
-        login(request, account_user)
-        payload = {
-            'id': account_user.id,
-            'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-            'iat': datetime.datetime.utcnow()
-            }
-        refresh_access_token = jwt.encode(payload, 'secret', algorithm='HS256')
-        response = Response()
-        response.set_cookie(key='jwt', value= refresh_access_token , httponly=True)
-        response.data = {'token':  refresh_access_token, 'user_id': account_user.id}
-        print(response.data['token'], account_user)
-        return response
-
-
-
-
-
 
 
 

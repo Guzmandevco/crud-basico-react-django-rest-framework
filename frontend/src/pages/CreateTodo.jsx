@@ -1,9 +1,8 @@
 import { useState, useContext } from "react";
 import { createTodo } from "../api/connect.api";
 import { useNavigate } from "react-router-dom";
-import { LoggingContext } from "../context/LogginContext";
 function CreateTodo() {
-  const { userData } = useContext(LoggingContext);
+  const { userData } = {};
   const handleSubmit = (e) => {
     e.preventDefault();
   };
@@ -25,7 +24,7 @@ function CreateTodo() {
       done: false,
       expiration_date: null,
     });
-    navigate("/all");
+    navigate("/dashboard");
   };
   return (
     <div className="create__todo ">

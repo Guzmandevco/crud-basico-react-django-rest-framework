@@ -9,20 +9,18 @@ function DashBoard() {
   const navigate = useNavigate();
   const [todos, setTodos] = useState([]);
   const [userData, setUserData] = useState(null);
-  let isAuthenticated = true;
   useEffect(() => {
     async function getData() {
       try {
         const { data } = await retrieveUserData(token);
         setTodos(data.todos);
-
-        alert(token);
+        // alert(JSON.stringify(data.todos));
       } catch (error) {
         console.error("Error al obtener datos:", error);
       }
     }
     getData();
-  }, []);
+  }, [todos]);
 
   //redirect to given 'to' param using useNavigate instance
   const redirect = (to = "/") => {
@@ -30,20 +28,15 @@ function DashBoard() {
   };
   return (
     <>
-      <h3 style={{ textAlign: "center", margin: "20px" }}>{`${
-        todos.length
-          ? "Aquí están todas sus tareas"
-          : "Usted aún no ha creado tareas"
-      }`}</h3>
       <div className="todo__container">
-        {isAuthenticated ? (
+        {todos.length ? (
           <>
             {todos.map((todo) => (
               <Todo key={todo.id} data={todo} />
             ))}
           </>
         ) : (
-          redirect()
+          <p>Usted no a creado Tareas </p>
         )}
       </div>
     </>

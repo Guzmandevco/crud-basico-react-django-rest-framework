@@ -15,17 +15,22 @@ from .models import Todo
 class CreateTodo(APIView):
     def post(self, request, *args, **kwargs):
         # Accede al usuario que tiene la sesión iniciada
-        user_id = int(self.request.data['user'])
-        user = User.objects.get(pk=user_id)
+        user_id = self.request.data.get('user')
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "El usuario no existe"}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer = TodoSerializer(data=request.data)
+
         if serializer.is_valid():
             try:
-                todo = Todo.objects.get(title=request.data['title'], user=user)
-                raise ValueError(f"Todo {request.data['title']} already exists for this user")
+                todo = Todo.objects.get(title=request.data.get('title'), user=user)
+                raise ValueError(f"Todo {request.data.get('title')} ya existe para este usuario")
             except Todo.DoesNotExist:
-                # Asigna el usuario actual a la tarea antes de guardarla
+                # Asigna el usuario actual a la tarea
                 serializer.save(user=user)
-                return Response({'data': 'any'}, status=status.HTTP_201_CREATED)
+                return Response({'data': 'Tarea creada correctamente'}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

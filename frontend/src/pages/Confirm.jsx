@@ -13,14 +13,14 @@ function Confirm() {
     if (confirm) {
       await deleteData(params.id);
       setTimeout(() => {
-        navigate("/all");
+        navigate("/dashboard");
       }, 500);
     }
   };
   const onCancel = () => {
     setConfirm(false);
     setTimeout(() => {
-      navigate("/all");
+      navigate("/dashboard");
     }, 500);
   };
   useEffect(() => {
